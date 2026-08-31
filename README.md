@@ -20,6 +20,11 @@ This repository contains all **lab assignments, experiments, and mini-projects**
 - [ ] `[Assignment 3 - Title 3](path_to_assign3)`
 ...
 
+### 📑 References
+
+- [Lab theory for Assignments I & II](<./Lab Assignments-I and II.pdf>)
+- Batra, S. [Dr. Shalini Batra]. (n.d.). Theory of Computations [YouTube playlist]. YouTube. Retrieved September 1, 2026, from https://www.youtube.com/playlist?list=PLpDGCxH86rUGDvxnONJfICXzIn_eT-5T3
+
 ---
 
 ### ⚠️ NOTE

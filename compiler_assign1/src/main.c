@@ -8,16 +8,19 @@ int main()
 {
     char *regex = NULL; // %ms allocates the buffer itself, so no malloc here
     printf("Enter a regex string (allowed symbols: a-z, A-Z; allowed operations: |, *, implicit concatenation): ");
-    if (scanf("%ms", &regex) != 1) {
+    if (scanf("%ms", &regex) != 1)
+    {
         fprintf(stderr, "Error: No input\n");
         return 1;
     }
-    char* init = init_regex(regex);
-    if (init) {
+    char *init = init_regex(regex);
+    if (init)
+    {
         printf("\n----------- REGEX -----------\n");
         printf("Initialized regex: %s\n", init);
-        char* postfix = infix_to_postfix(init);
-        if (postfix) {
+        char *postfix = infix_to_postfix(init);
+        if (postfix)
+        {
             printf("Postfix regex: %s\n\n", postfix);
             NFA *nfa = postfix_to_nfa(postfix);
             free(postfix);
@@ -27,6 +30,13 @@ int main()
             DFA *dfa = nfa_to_dfa(nfa);
             printf("----------- DFA -----------\n");
             print_dfa(dfa);
+            printf("----------- MIN DFA -----------\n");
+            DFA *min_dfa = minimise_dfa(dfa);
+            if (min_dfa)
+            {
+                print_dfa(min_dfa);
+                free_dfa(min_dfa);
+            }
             free_dfa(dfa); // !WARN: Free before the NFA: the DFA's sets point at NFA states!
             free_nfa(nfa);
         }

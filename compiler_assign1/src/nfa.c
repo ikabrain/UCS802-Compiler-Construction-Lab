@@ -3,10 +3,8 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "regex.h"
 
 #include "nfa.h"
-
 
 // Function to create a new NFA state
 Node *create_node(int id)
@@ -27,8 +25,10 @@ NFA *create_nfa(Node *start, Node *end)
 }
 
 // Function to free the memory allocated for an NFA with all its states
-void free_nfa(NFA *nfa) {
-    if (nfa == NULL) return;
+void free_nfa(NFA *nfa)
+{
+    if (nfa == NULL)
+        return;
 
     // Collect every reachable state first (same traversal as print_nfa), so shared states and
     // cycles are seen exactly once, then free each one. Freeing during the walk would revisit freed nodes.
@@ -122,7 +122,6 @@ void create_edge(Node *from, char sym, Node *to)
     from->n++;
 }
 
-
 // Single symbol NFA
 NFA *symbol_nfa(char sym, int start_id, int end_id)
 {
@@ -135,9 +134,9 @@ NFA *symbol_nfa(char sym, int start_id, int end_id)
 // Concatenate two NFAs with an epsilon transition from the end of the first NFA to the start of the second NFA
 NFA *concatenate(NFA *nfa1, NFA *nfa2)
 {
-    create_edge(nfa1->end, 0, nfa2->start);    // Create epsilon transition from nfa1's end to nfa2's start
+    create_edge(nfa1->end, 0, nfa2->start);           // Create epsilon transition from nfa1's end to nfa2's start
     NFA *result = create_nfa(nfa1->start, nfa2->end); // New NFA with nfa1's start and nfa2's end
-    free(nfa1); // The inputs are consumed: free only their wrappers, the states live on in result
+    free(nfa1);                                       // The inputs are consumed: free only their wrappers, the states live on in result
     free(nfa2);
     return result;
 }
@@ -170,32 +169,39 @@ NFA *kleene_star(NFA *nfa, int new_start_id, int new_end_id)
 }
 
 // Convert a postfix regex to an NFA
-NFA *postfix_to_nfa(const char *postfix) {
-    if (postfix == NULL) return NULL;
+NFA *postfix_to_nfa(const char *postfix)
+{
+    if (postfix == NULL)
+        return NULL;
 
     NFA *stack[MAX_STATES]; // Stack to hold intermediate NFAs
-    int top = -1;    // Stack pointer
+    int top = -1;           // Stack pointer
     int next_id = 0;
 
     // Pops and id increments are done in separate statements: C leaves the evaluation order of function
     // arguments unspecified, so f(x++, x++) or f(stack[top--], stack[top--]) is undefined behaviour.
-    for (const char *p = postfix; *p != '\0'; p++) { // p is pointer to current char in postfix
-        if (*p == '*') {
+    for (const char *p = postfix; *p != '\0'; p++)
+    { // p is pointer to current char in postfix
+        if (*p == '*')
+        {
             int s = next_id++, e = next_id++;
             stack[top] = kleene_star(stack[top], s, e); // Replace the top NFA with its kleene star
         }
-        else if (*p == '.') {
+        else if (*p == '.')
+        {
             NFA *b = stack[top--]; // Right operand is on top
             NFA *a = stack[top--]; // Left operand is below it
             stack[++top] = concatenate(a, b);
         }
-        else if (*p == '|') {
+        else if (*p == '|')
+        {
             NFA *b = stack[top--];
             NFA *a = stack[top--];
             int s = next_id++, e = next_id++;
             stack[++top] = union_nfa(a, b, s, e);
         }
-        else {
+        else
+        {
             int s = next_id++, e = next_id++;
             stack[++top] = symbol_nfa(*p, s, e); // Create a new NFA for the symbol and push it
         }
@@ -221,7 +227,8 @@ int epsilon_closure(Node **T, int t_count, Node **closure)
         Node *t = stack[top--]; // Pop t, the top element, off stack
         for (int j = 0; j < t->n; j++)
         {
-            if (t->sym[j] != 0) continue; // Only ε-edges (sym 0) count
+            if (t->sym[j] != 0)
+                continue; // Only ε-edges (sym 0) count
             int found = 0;
             for (int k = 0; k < count; k++)
             {

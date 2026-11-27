@@ -26,5 +26,6 @@ typedef struct DFA
 void free_dfa(DFA *dfa);
 void print_dfa(DFA *dfa);
 DFA *nfa_to_dfa(NFA *nfa);
+DFA *minimise_dfa(DFA *dfa);
 
 #endif

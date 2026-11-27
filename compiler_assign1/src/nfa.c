@@ -7,9 +7,6 @@
 
 #include "nfa.h"
 
-// Each symbol, '|' and '*' adds 2 states, so a regex of n characters needs at most 2n states
-#define MAX_STATES (2 * MAX_REGEX_LENGTH)
-
 
 // Function to create a new NFA state
 Node *create_node(int id)
@@ -109,7 +106,7 @@ void print_nfa(NFA *nfa)
 
     // Print the start and accept states
     printf("Start State: %d\n", nfa->start->id);
-    printf("Accept State: %d\n", nfa->end->id);
+    printf("Accept State: %d\n\n", nfa->end->id);
 }
 
 // Function to create a new edge between two NFA states
@@ -242,4 +239,52 @@ int epsilon_closure(Node **T, int t_count, Node **closure)
         }
     }
     return count;
+}
+
+// Function to collect the input alphabet of an NFA
+// Fills alphabet[] (caller gives MAX_SYMBOLS slots) and returns the number of symbols in it.
+int get_alphabet(NFA *nfa, char *alphabet)
+{
+    Node *states[MAX_STATES]; // Same traversal as print_nfa, to visit every state once
+    int count = 0;
+    int n_symbols = 0;
+    states[count++] = nfa->start;
+    for (int i = 0; i < count; i++)
+    {
+        Node *state = states[i];
+        for (int j = 0; j < state->n; j++)
+        {
+            if (state->sym[j] != 0) // Add the symbol if it's not ε and not already there
+            {
+                int found = 0;
+                for (int k = 0; k < n_symbols; k++)
+                {
+                    if (alphabet[k] == state->sym[j])
+                    {
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    alphabet[n_symbols++] = state->sym[j];
+                }
+            }
+            // Add the next state to the list if it's not already there
+            int found = 0;
+            for (int k = 0; k < count; k++)
+            {
+                if (states[k] == state->to[j])
+                {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                states[count++] = state->to[j];
+            }
+        }
+    }
+    return n_symbols;
 }

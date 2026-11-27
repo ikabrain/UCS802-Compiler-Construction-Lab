@@ -2,23 +2,19 @@
 
 > **👤 Student:** Ikansh Mahajan  
 > **🪪 Roll No.:** 102303754  
-> **🧑🏽‍🏫 Instructor:** Teacher with [faculty details](https://csed.thapar.edu/faculty)  
+> **🧑🏽‍🏫 Instructor:** Taught by [Dr. Ashutosh Aggarwal](https://www.thapar.edu/faculties/view/Ashutosh-Aggarwal/MzM5/NA==) 
 > **🏫 Batch:** 4C36  
 
 ---
 
 ### 📘 Overview
 
-This repository contains all **lab assignments, experiments, and mini-projects** completed as part of the **Compiler Construction (UCS802)** course at Thapar Institute of Engineering & Technology.
-
-<!--, under the guidance of _Dr. ABC_-->
+This repository contains all **lab assignments, experiments, and mini-projects** completed as part of the **Compiler Construction (UCS802)** course at Thapar Institute of Engineering & Technology, under the guidance of _Dr. Ashutosh Aggarwal_.
 
 ### ⚙️ Topics Covered
 
-- [x] `[Assignment 1 - Title 1](path_to_assign1)`
-- [x] `[Assignment 2 - Title 2](path_to_assign2)`
-- [ ] `[Assignment 3 - Title 3](path_to_assign3)`
-...
+- [x] `[Assignment 1 - Minimized DFA for Regular Expression](./compiler_assign1/src/)`
+- [ ] `[Assignment 2 - Prepare SLR Parser from given grammar](./compiler_assign2/src/)`
 
 ### 📑 References
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "grammar.h"
 #include "items.h"
+#include "table.h"
 
 int main()
 {
@@ -36,6 +37,12 @@ int main()
         Collection *c = build_collection(g);
         printf("----------- LR(0) ITEMS -----------\n");
         print_collection(g, c);
+        Table *t = build_table(g, c);
+        printf("----------- SLR TABLE -----------\n");
+        print_table(g, t);
+        if (t && t->conflicts)
+            printf("Grammar is not SLR(1).\n");
+        free(t);
         free_collection(c);
         free(g);
     }

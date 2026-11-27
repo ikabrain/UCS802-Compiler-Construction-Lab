@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "grammar.h"
+#include "items.h"
 
 int main()
 {
@@ -32,6 +33,10 @@ int main()
         print_grammar(g);
         printf("----------- FIRST & FOLLOW -----------\n");
         print_first_follow(g);
+        Collection *c = build_collection(g);
+        printf("----------- LR(0) ITEMS -----------\n");
+        print_collection(g, c);
+        free_collection(c);
         free(g);
     }
     return 0;

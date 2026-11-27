@@ -3,6 +3,7 @@
 #include "grammar.h"
 #include "items.h"
 #include "table.h"
+#include "parser.h"
 
 int main()
 {
@@ -41,7 +42,20 @@ int main()
         printf("----------- SLR TABLE -----------\n");
         print_table(g, t);
         if (t && t->conflicts)
+        {
             printf("Grammar is not SLR(1).\n");
+        }
+        else if (t)
+        {
+            char *str = NULL; // %ms allocates the buffer itself, so no malloc here
+            printf("Enter a string to parse (like id+id*id): ");
+            if (scanf("%ms", &str) == 1)
+            {
+                printf("\n----------- PARSING -----------\n");
+                printf("%s\n", parse(g, t, str) ? "Accept" : "Reject");
+                free(str);
+            }
+        }
         free(t);
         free_collection(c);
         free(g);

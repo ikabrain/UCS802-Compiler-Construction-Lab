@@ -17,7 +17,7 @@ int main()
     char *lines[MAX_PRODUCTIONS] = {NULL}; // %ms allocates each line itself, so no malloc here
     for (int i = 0; i < n; i++)
     {
-        printf("Enter production %d (like E->E+T|T, # for ε): ", i + 1);
+        printf("Enter production %d (like E->E+T|T, no spaces, # for ε): ", i + 1);
         if (scanf("%ms", &lines[i]) != 1)
         {
             fprintf(stderr, "Error: No input\n");

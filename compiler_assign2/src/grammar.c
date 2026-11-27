@@ -1,9 +1,9 @@
 /*
  * grammar.c - Function to read a CFG, augment it with S' -> S, and find the FIRST and FOLLOW sets of its symbols
- * Non-terminals:  an uppercase letter, optionally followed by 's      (E, T, E')
- * Terminals:      a run of lowercase letters and digits               (id, num)
- *                 or any other single character                       (+, *, (, ))
- * Special:        '|' separates alternatives, '#' on its own is ε, '$' is the end marker
+ * Non-terminals:  one uppercase letter, optionally followed by 's                          (E, T, E')
+ * Terminals:      one lowercase letter, digit or operator character + - * / % ^ = < > ! & , ; : ( ) [ ] { }
+ * Concatenation:  implicit, every character is its own symbol                               (ab means a then b)
+ * Special:        '|' separates alternatives, '#' on its own is ε, '$' is the end marker, '.' is not allowed
  */
 #include <ctype.h>
 #include <stdio.h>
@@ -11,6 +11,14 @@
 #include <string.h>
 
 #include "grammar.h"
+
+#define TERMINAL_CHARS "+-*/%^=<>!&,;:()[]{}" // Operator characters that may be terminals, besides a-z and 0-9
+
+// Function to check whether c may be a terminal: a lowercase letter, a digit or an operator character
+int is_terminal_char(char c)
+{
+    return islower((unsigned char)c) || isdigit((unsigned char)c) || (c != '\0' && strchr(TERMINAL_CHARS, c) != NULL);
+}
 
 // Function to read the name of the next symbol at s into name (if it fits in MAX_NAME); returns its length, 0 at the end of s
 int read_symbol(const char *s, char *name)
@@ -22,14 +30,9 @@ int read_symbol(const char *s, char *name)
         while (s[len] == '\'')
             len++; // Primes belong to the non-terminal: E'
     }
-    else if (islower((unsigned char)s[0]) || isdigit((unsigned char)s[0]))
-    {
-        while (islower((unsigned char)s[len]) || isdigit((unsigned char)s[len]))
-            len++; // A run of lowercase letters and digits is one terminal: id
-    }
     else if (s[0] != '\0')
     {
-        len = 1; // Any other character is a terminal on its own: +
+        len = 1; // Every other character is a symbol on its own, so ab is a then b
     }
     if (len < MAX_NAME)
     {
@@ -197,10 +200,18 @@ Grammar *init_grammar(char **lines, int n)
             {
                 if (*p == '#')
                     return grammar_error(g, "'#' (ε) must be an alternative on its own", i + 1);
-                if (*p == '$')
-                    return grammar_error(g, "'$' is reserved for the end marker", i + 1);
                 if (*p == '\'')
                     return grammar_error(g, "''' must follow an uppercase non-terminal", i + 1);
+                if (!isupper((unsigned char)*p) && !is_terminal_char(*p))
+                {
+                    fprintf(stderr, "Error: Invalid character '%c' in production %d\n", *p, i + 1);
+                    if (*p == '.')
+                        fprintf(stderr, "'.' is not allowed in a production. Use implicit concatenation: ab means a then b.\n");
+                    if (*p == '$')
+                        fprintf(stderr, "'$' is reserved for the end marker.\n");
+                    free(g);
+                    return NULL;
+                }
                 len = read_symbol(p, name);
                 if (len >= MAX_NAME)
                     return grammar_error(g, "Symbol name too long", i + 1);
@@ -280,6 +291,8 @@ int tokenize(Grammar *g, const char *str, int *tokens)
         if (X == -1 || !g->is_terminal[X] || X == g->end)
         {
             fprintf(stderr, "Error: '%.*s' is not a terminal of the grammar\n", len, p);
+            if (*p == '.')
+                fprintf(stderr, "'.' is not allowed in a string. Use implicit concatenation: ab means a then b.\n");
             return -1;
         }
         tokens[count++] = X;

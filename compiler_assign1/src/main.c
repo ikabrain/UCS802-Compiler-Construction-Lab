@@ -35,8 +35,17 @@ int main()
             if (min_dfa)
             {
                 print_dfa(min_dfa);
-                free_dfa(min_dfa);
             }
+            printf("----------- STRING CHECK -----------\n");
+            char *str = NULL; // %ms allocates the buffer itself, so no malloc here
+            printf("Enter a string to check: ");
+            if (scanf("%ms", &str) == 1)
+            {
+                // Check with the minimal DFA if there is one; the original DFA accepts exactly the same strings
+                printf("%s\n", is_accepted(min_dfa ? min_dfa : dfa, str) ? "Accepted" : "Not Accepted");
+                free(str);
+            }
+            free_dfa(min_dfa); // free_dfa does nothing for NULL
             free_dfa(dfa); // !WARN: Free before the NFA: the DFA's sets point at NFA states!
             free_nfa(nfa);
         }

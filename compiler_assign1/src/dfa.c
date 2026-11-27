@@ -323,3 +323,22 @@ DFA *minimise_dfa(DFA *dfa)
 
     return min;
 }
+
+// Function to run a string through a DFA; returns 1 if the DFA accepts it, 0 if not
+int is_accepted(DFA *dfa, const char *str)
+{
+    if (dfa == NULL || str == NULL)
+        return 0;
+
+    int current = dfa->start;
+    for (const char *p = str; *p != '\0'; p++) // p is pointer to current char in str
+    {
+        int k = 0;
+        while (k < dfa->n_symbols && dfa->alphabet[k] != *p)
+            k++; // Find the index of the symbol in the alphabet
+        if (k == dfa->n_symbols || dfa->states[current]->to[k] == -1)
+            return 0; // Symbol not in Σ, or no transition on it: the string is rejected
+        current = dfa->states[current]->to[k];
+    }
+    return is_final(dfa, current); // Accepted only if the string ends in a final state
+}
